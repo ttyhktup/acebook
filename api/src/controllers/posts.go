@@ -248,3 +248,5 @@ func UpdatePostLikes(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Like added successfully", "liked_post": likedPost})
 }
+
+//test
