@@ -8,7 +8,6 @@ import "./FeedPage.css"
 export const FeedPage = () => {
     const [posts, setPosts] = useState([]);
     const [post, setPost] = useState("");
-    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -51,7 +50,6 @@ export const FeedPage = () => {
             setPosts(sortedPosts);
         } catch (err) {
             console.error(err);
-            setErrorMessage("  🤡 nice try bozo! try deleting your own post instead... 😉");
         }
     };
   
@@ -94,7 +92,6 @@ export const FeedPage = () => {
             </div>
           ))}
         </div>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
       </div>
     );
   };

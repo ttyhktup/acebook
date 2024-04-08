@@ -42,9 +42,6 @@ const Post = ({ post, onLike, user, onDelete, token }) => {
   const handleSubmitComment = async (event) => {
     event.preventDefault();
     try {
-      console.log("Token:", token);
-      console.log("Comment:", comment);
-      console.log("Post ID:", post._id);
       await createComments(token, comment, post._id);
       const updatedComments = await getComments(post._id, token);
       const sortedComments = updatedComments.comments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));

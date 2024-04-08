@@ -1,4 +1,4 @@
-import userImage from "/src/static/img/user_image.png";
+// import userImage from "/src/static/img/user_image.png";
 import "./Comment.css"
 const Comment= ({comment, onDelete}) => {
 
@@ -9,7 +9,8 @@ const Comment= ({comment, onDelete}) => {
     return (
         <div className="comment-info">
             <div className="comment-user">
-                <img className="user-image" src={userImage} alt="image" />
+                <p>{comment.User.username}</p>
+                <img className="user-image" src={comment.User.image} alt="image" />
             </div>
             <div className="create-comment">
                 <p>{comment.message}</p>
