@@ -85,13 +85,13 @@ export const FeedPage = () => {
           />
             <button className="post-submit" type="submit">Post</button>
         </form>
-        <div className="feed-all-posts" role="feed">
+        {/* <div className="feed-all-posts" role="feed"> */}
           {posts.map((post) => (
-            <div className="feed-post" key={post._id}>
+            <div key={post._id}>
               <Post post={post} token={token} onDelete={handleDelete} onLike={handleLike} user={post.User} />
             </div>
           ))}
-        </div>
+        {/* </div> */}
       </div>
     );
   };

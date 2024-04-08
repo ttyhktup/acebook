@@ -1,4 +1,4 @@
-// import userImage from "/src/static/img/user_image.png";
+import image from "/src/static/img/x-button.png";
 import "./Comment.css"
 const Comment= ({comment, onDelete}) => {
 
@@ -7,14 +7,16 @@ const Comment= ({comment, onDelete}) => {
     };
 
     return (
-        <div className="comment-info">
-            <div className="comment-user">
-                <p>{comment.User.username}</p>
-                <img className="user-image" src={comment.User.image} alt="image" />
+        <div className="comment-info" >
+            <div className="comment-content">
+                <div className="comment-user">
+                    <img className="comment-user-image" src={comment.User.image} alt="image" />
+                    <p>{comment.User.username}</p>
+                </div>
+                <img className="delete-comment" onClick={handleDeleteCommentClick} src={image} alt="delete" />
             </div>
             <div className="create-comment">
                 <p>{comment.message}</p>
-                <button onClick={handleDeleteCommentClick}>Delete</button>
             </div>
         </div>
     );
