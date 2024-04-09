@@ -23,15 +23,6 @@
     margin: 50px;
 }
 
-/*.left-half {*/
-/*    width: 100%;*/
-/*    padding: 20px;*/
-/*    background-color: #f0f0f0;*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*}*/
-
 .signup-container {
     display: flex;
     flex-direction: column; /* Change flex-direction to column */

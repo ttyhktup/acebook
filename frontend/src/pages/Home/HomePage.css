@@ -3,37 +3,33 @@
   flex-direction: column; /* Change direction to column */
   align-items: center; /* Center items horizontally */
   justify-content: center; /* Center items vertically */
-  height: 86vh;
+  min-height: 86vh;
 }
 
 .welcome-message {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 5%;
 }
 
 
 .button-container {
-  display: center; 
+  display: flex;
+  justify-content: center; 
+  width: 40%;
 }
 
-
-.signup,.login{
-  width: 200px; /* Adjust button width */
+.login {
+  width: 50%; 
   padding: 15px;
   text-align: center;
   color: #ffffff;
   border-radius: 20px;
   font-size: 1.6em;
-  margin: 20px; /* Add margin for spacing */
-  box-sizing: border-box; /* Ensure padding and border are included in the width */
-}
-
-
-
-.login {
-  background-color: #30cc54; /* Set initial background color */
-  color: white; /* Set initial text color */
-  transition: background-color 0.3s ease; /* Add transition effect */
+  margin: 20px; 
+  box-sizing: border-box; 
+  background-color: #30cc54;
+  color: white; 
+  transition: background-color 0.3s ease; 
 }
 
 
@@ -43,9 +39,17 @@
 }
 
 .signup {
-  background-color: #503bdc; /* Set initial background color */
-  color: white; /* Set initial text color */
-  transition: background-color 0.3s ease; /* Add transition effect */
+  width: 50%; 
+  padding: 15px;
+  text-align: center;
+  color: #ffffff;
+  border-radius: 20px;
+  font-size: 1.6em;
+  margin: 20px; 
+  box-sizing: border-box; 
+  background-color: #503bdc; 
+  color: white;
+  transition: background-color 0.3s ease; 
 }
 
 .signup:hover {
