@@ -44,6 +44,8 @@ func GetAllPosts(ctx *gin.Context) {
 		return
 	}
 
+	loggedUserID := strconv.Itoa(int([]byte(userID)[0]))
+
 	var jsonPosts []JSONPost
 	for _, post := range *posts {
 		if post.UserID == "" {
@@ -75,7 +77,7 @@ func GetAllPosts(ctx *gin.Context) {
 		}
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"posts": jsonPosts, "token": token})
+	ctx.JSON(http.StatusOK, gin.H{"posts": jsonPosts, "token": token, "loggedUserID": loggedUserID})
 }
 
 func GetSpecificPost(ctx *gin.Context) {
@@ -91,6 +93,16 @@ func GetSpecificPost(ctx *gin.Context) {
 		SendInternalError(ctx, err)
 		return
 	}
+
+	userIDToken, exists := ctx.Get("userID")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"ERROR": "USER ID NOT FOUND IN CONTEXT"})
+		return
+	}
+
+	userIDString := userIDToken.(string)
+
+	loggedUserID := strconv.Itoa(int([]byte(userIDString)[0]))
 
 	var jsonPost JSONPost
 
@@ -122,7 +134,7 @@ func GetSpecificPost(ctx *gin.Context) {
 		}
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"post": jsonPost})
+	ctx.JSON(http.StatusOK, gin.H{"post": jsonPost, "loggedUserID": loggedUserID})
 }
 
 type createPostRequestBody struct {
@@ -172,7 +184,7 @@ func CreatePost(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"message": "Post created", "userID": newPost.UserID}) //sends confirmation message back if successfully saved
+	ctx.JSON(http.StatusCreated, gin.H{"message": "Post created", "loggedUserID": newPost.UserID}) //sends confirmation message back if successfully saved
 }
 
 func DeletePost(ctx *gin.Context) {
@@ -190,6 +202,8 @@ func DeletePost(ctx *gin.Context) {
 	}
 
 	userIDString := userIDToken.(string)
+
+	loggedUserID := strconv.Itoa(int([]byte(userIDString)[0]))
 	// Fetch the post from the database
 	post, err := models.FetchSpecificPost(uint64(postID))
 	if post.UserID != strconv.Itoa(int([]byte(userIDString)[0])) {
@@ -215,7 +229,7 @@ func DeletePost(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"success": true, "message": "Post deleted successfully", "deleted post": DeletedPost})
+	ctx.JSON(http.StatusOK, gin.H{"success": true, "message": "Post deleted successfully", "deleted post": DeletedPost, "loggedUserID": loggedUserID})
 }
 
 func UpdatePostLikes(ctx *gin.Context) {

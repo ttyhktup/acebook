@@ -3,15 +3,15 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"mime/multipart"
-	"net/http"
-	"os"
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
 	"github.com/makersacademy/go-react-acebook-template/api/src/auth"
 	"github.com/makersacademy/go-react-acebook-template/api/src/models"
+	"mime/multipart"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func uploadFileToHostingService(file multipart.File, fileHeader *multipart.FileHeader) (string, error) {
@@ -54,37 +54,6 @@ func uploadFileToHostingService(file multipart.File, fileHeader *multipart.FileH
 
 func CreateUser(ctx *gin.Context) {
 	var newUser models.User // Creates a variable called newUser with the User struct type User{gorm.Model(id,...), email, password}
-	// err := ctx.ShouldBindJSON(&newUser) // Parses the JSON from the request and attempts to match the fields to the newUser fields
-
-	// ERROR HANDLING for ShouldBindJSON below
-
-	// if err != nil {
-	// 	if jsonErr, ok := err.(*json.UnmarshalTypeError); ok {
-	// 		fieldName := jsonErr.Field
-	// 		errorMsg := fmt.Sprintf("Invalid value for field '%s': %v", fieldName, jsonErr.Error())
-	// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": errorMsg})
-	// 	} else {
-	// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	}
-	// 	return
-	// }
-
-	// The below block reads the image data from the request where
-	// the content-type is set to multipart/form-data (in Headers)
-
-	// file, header, err := ctx.Request.FormFile("image")
-	// // image is the key in the Postman form-data POST request
-	// if err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// defer file.Close()
-	// // Read file data
-	// fileBytes, err := io.ReadAll(file)
-	// if err != nil {
-	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
 
 	newUser = models.User{
 		// Update user fields with file information
@@ -153,17 +122,6 @@ func CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	// existingUser, err := models.FindUserByEmail(newUser.Email)
-	// if err != nil {
-	// 	SendInternalError(ctx, err)
-	// 	return
-	// }
-
-	// if existingUser != nil {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{"message": "Email already exists"})
-	// 	return
-	// }
-
 	file, fileHeader, err := ctx.Request.FormFile("image")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Missing image"})
@@ -191,7 +149,17 @@ func CreateUser(ctx *gin.Context) {
 	userID := string(newUser.ID)
 	token, _ := auth.GenerateToken(userID)
 
-	ctx.JSON(http.StatusCreated, gin.H{"message": "OK", "token": token}) //sends confirmation message back if successfully saved
+	userIDToken, exists := ctx.Get("userID")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"ERROR": "USER ID NOT FOUND IN CONTEXT"})
+		return
+	}
+
+	userIDString := userIDToken.(string)
+
+	loggedUserID := strconv.Itoa(int([]byte(userIDString)[0]))
+
+	ctx.JSON(http.StatusCreated, gin.H{"message": "OK", "token": token, "loggedUserID": loggedUserID}) //sends confirmation message back if successfully saved
 }
 
 func GetUser(ctx *gin.Context) {
@@ -200,14 +168,22 @@ func GetUser(ctx *gin.Context) {
 	// The below two lines of code are to extract userID from token when that functionality becomes possible
 	// val, _ := ctx.Get("userID")
 	// userID := val.(string)
+	userIDToken, exists := ctx.Get("userID")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"ERROR": "USER ID NOT FOUND IN CONTEXT"})
+		return
+	}
 
-	userID := "18" // hardcoded for frontend testing until userID can be extracted from token
-	token, _ := auth.GenerateToken(userID)
-	user, err := models.FindUser(userID)
+	userIDString := userIDToken.(string)
+
+	loggedUserID := strconv.Itoa(int([]byte(userIDString)[0]))
+
+	token, _ := auth.GenerateToken(loggedUserID)
+	user, err := models.FindUser(loggedUserID)
 	if err != nil {
 		SendInternalError(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"user": user, "token": token})
+	ctx.JSON(http.StatusOK, gin.H{"user": user, "token": token, "loggedUserID": loggedUserID})
 }
