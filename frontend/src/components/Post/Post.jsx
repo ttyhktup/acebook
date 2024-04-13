@@ -1,5 +1,5 @@
 import "./Post.css";
-import image from "/src/static/img/x-button.png";
+import image from "/src/static/img/cross.png";
 import like from "/src/static/img/heart.png"
 import { useState, useEffect } from "react";
 import Comment from "../Comment/Comment";
@@ -42,9 +42,6 @@ const Post = ({ post, onLike, user, onDelete, token }) => {
   const handleSubmitComment = async (event) => {
     event.preventDefault();
     try {
-      console.log("Token:", token);
-      console.log("Comment:", comment);
-      console.log("Post ID:", post._id);
       await createComments(token, comment, post._id);
       const updatedComments = await getComments(post._id, token);
       const sortedComments = updatedComments.comments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -74,10 +71,10 @@ const Post = ({ post, onLike, user, onDelete, token }) => {
   const buttonClass = isClicked ? 'like-button clicked' : 'like-button'
 
   return (
-      <div className="post-container" key={post._id}>
+      <div className="posts-and-comments" key={post._id}>
         <div className="post">
-          <div className="post-user-delete">
-            <div className="post-user">
+          <div className="post-user">
+            <div className="post-user-info">
               <img className="user-image" src={user.image} alt="image" />
               <p>{user.username}</p>
             </div>
@@ -91,11 +88,9 @@ const Post = ({ post, onLike, user, onDelete, token }) => {
             </div>
           </div>
         </div>
-        <p className="border"></p>
-
+            
         <div className="comments">
-          <form onSubmit={handleSubmitComment}>
-            <div className="create-comment">
+          <form className="create-comment" onSubmit={handleSubmitComment}>
               <input
                   className="comment-input"
                   type="text"
@@ -103,12 +98,11 @@ const Post = ({ post, onLike, user, onDelete, token }) => {
                   placeholder="Add a comment..."
               />
               <button className="comment-submit" type="submit">Submit</button>
-            </div>
           </form>
-
+          <h4>Comments</h4>
           {comments
               .map((comment) => (
-                  <div className="feed-comment" key={comment._id}>
+                  <div className="comments-feed" key={comment._id}>
                     <Comment comment={comment} onDelete={handleDeleteComment} />
                   </div>
               ))}

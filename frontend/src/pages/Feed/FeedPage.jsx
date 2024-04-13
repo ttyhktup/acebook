@@ -8,7 +8,6 @@ import "./FeedPage.css"
 export const FeedPage = () => {
     const [posts, setPosts] = useState([]);
     const [post, setPost] = useState("");
-    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -51,7 +50,6 @@ export const FeedPage = () => {
             setPosts(sortedPosts);
         } catch (err) {
             console.error(err);
-            setErrorMessage("  🤡 nice try bozo! try deleting your own post instead... 😉");
         }
     };
   
@@ -87,14 +85,13 @@ export const FeedPage = () => {
           />
             <button className="post-submit" type="submit">Post</button>
         </form>
-        <div className="feed-all-posts" role="feed">
+        {/* <div className="feed-all-posts" role="feed"> */}
           {posts.map((post) => (
-            <div className="feed-post" key={post._id}>
+            <div key={post._id}>
               <Post post={post} token={token} onDelete={handleDelete} onLike={handleLike} user={post.User} />
             </div>
           ))}
-        </div>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {/* </div> */}
       </div>
     );
   };

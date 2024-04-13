@@ -1,28 +1,31 @@
-.post-container {
+.comment-info {
+  width: 95%;
+  padding: 2%;
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Adding a softer border */
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4); 
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.comment-content {
   display: flex;
   justify-content: space-between;
-  padding: 15px;
-  flex-direction: column;
-  width: 100%;
-  align-items: center;
 }
 
-.post-info {
+.comment-user {
   display: flex;
-  flex-direction: column;
-  align-items: center; /* Center horizontally */
-  margin-bottom: 10px; /* Add some space between each post */
+  justify-content: space-between;
 }
 
-.comment-info {
-  width: 100px;
+.comment-user-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .create-comment {
   display: flex;
   flex-direction: column;
-  /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);*/
-  width: 250px;
   justify-content: center;
 }
 
@@ -53,4 +56,9 @@
 .create-comment input[type="text"]:focus {
   outline: none; /* Remove default focus outline */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase shadow on focus */
+}
+
+.delete-comment{
+  width: 10px;
+  height: 10px;
 }
