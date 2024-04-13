@@ -261,3 +261,41 @@ func DeleteComment(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"success": true, "message": "Comment deleted successfully", "deleted comment": DeletedComment, "token": token, "loggedUserID": loggedUserID})
 }
+
+func UpdateCommentLikes(ctx *gin.Context) {
+	// Get the post ID from the URL path parameter
+	postID, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid post ID"})
+		return
+	}
+
+	// Get the comment ID from the URL path parameter
+	commentID, err := strconv.ParseUint(ctx.Param("comment_id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid comment ID"})
+		return
+	}
+
+	// Fetch the comment from the database
+	comment, err := models.FetchSpecificComment(int(postID), int(commentID))
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Comment not found"})
+		return
+	}
+
+	// Check if the post is nil
+	if comment == nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Comment not found"})
+		return
+	}
+
+	// Increment the likes count
+	likedComment, err := comment.SaveLike()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save like in comment"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Like added successfully", "liked_comment": likedComment})
+}
