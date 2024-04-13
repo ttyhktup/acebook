@@ -18,7 +18,7 @@ func setupPostRoutes(baseRouter *gin.RouterGroup) {
 	posts.DELETE("/:id/delete", middleware.AuthenticationMiddleware, controllers.DeletePost)
 	//comments routes
 	posts.GET("/:id/comments", middleware.AuthenticationMiddleware, controllers.GetAllCommentsByPostId)
-	posts.POST("/:idç", middleware.AuthenticationMiddleware, controllers.CreateComment)
+	posts.POST("/:id", middleware.AuthenticationMiddleware, controllers.CreateComment)
 	posts.GET("/:id/comments/:comment_id", middleware.AuthenticationMiddleware, controllers.GetSpecificComment)
 	posts.DELETE("/:id/comments/:comment_id/delete", middleware.AuthenticationMiddleware, controllers.DeleteComment)
 
