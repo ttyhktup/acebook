@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPosts, createPosts, updatePostLikes, deletePosts} from "../../services/posts";
 import Post from "../../components/Post/Post";
+import React from "react";
 import "./FeedPage.css"
 
 
 export const FeedPage = () => {
     const [posts, setPosts] = useState([]);
     const [post, setPost] = useState("");
+    const [loggedUserID, setLoggedUserID] = useState("");
     const navigate = useNavigate();
+    const { Fragment } = React;
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -18,6 +21,8 @@ export const FeedPage = () => {
                     const sortedPosts = data.posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                     setPosts(sortedPosts);
                     localStorage.setItem("token", data.token);
+                    // console.log(data.loggedUserID)
+                    setLoggedUserID(data.loggedUserID)
                 })
                 .catch((err) => {
                     console.error(err);
@@ -85,13 +90,11 @@ export const FeedPage = () => {
           />
             <button className="post-submit" type="submit">Post</button>
         </form>
-        {/* <div className="feed-all-posts" role="feed"> */}
           {posts.map((post) => (
-            <div key={post._id}>
-              <Post post={post} token={token} onDelete={handleDelete} onLike={handleLike} user={post.User} />
-            </div>
+              <Fragment key={post._id}>
+                <Post post={post} token={token} onDelete={handleDelete} onLike={handleLike} user={post.User} loggedUserID={loggedUserID}/>
+              </Fragment>
           ))}
-        {/* </div> */}
       </div>
     );
   };
