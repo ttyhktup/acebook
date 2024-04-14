@@ -1,10 +1,11 @@
 .comment-info {
+  font-size: medium;
   width: 95%;
   padding: 2%;
   border: 1px solid rgba(0, 0, 0, 0.1); /* Adding a softer border */
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4); 
   border-radius: 5px;
-  margin: 10px;
+  margin: 1%;
 }
 
 .comment-content {
@@ -13,20 +14,21 @@
 }
 
 .comment-user {
+  font-weight: 400;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .comment-user-image {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
-.create-comment {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.comment-message {
+  padding-left: 2%;
 }
 
 .create-comment button {

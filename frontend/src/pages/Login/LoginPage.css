@@ -19,7 +19,6 @@
 }
 
 .login-container h1 {
-    font-family: "Open Sans", sans-serif;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -82,14 +81,4 @@
 .login-form input[type="submit"]:hover {
     background-color: #8fd98f;
     color: #ffffff;
-}
-.signup {
-    width: 60%;
-    padding: 15px;
-    margin: 20px auto;
-    text-align: center;
-    color: #ffffff;
-    border-radius: 20px;
-    font-size: 1.5em;
-    background-color: #646cff;
 }

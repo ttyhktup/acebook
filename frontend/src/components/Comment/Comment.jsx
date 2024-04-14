@@ -1,6 +1,6 @@
 import image from "/src/static/img/x-button.png";
 import "./Comment.css"
-const Comment= ({comment, onDelete}) => {
+const Comment= ({comment, onDelete, commentUserID}) => {
 
     const handleDeleteCommentClick = () => {
         onDelete(comment._id);
@@ -13,9 +13,9 @@ const Comment= ({comment, onDelete}) => {
                     <img className="comment-user-image" src={comment.User.image} alt="image" />
                     <p>{comment.User.username}</p>
                 </div>
-                <img className="delete-comment" onClick={handleDeleteCommentClick} src={image} alt="delete" />
+                {commentUserID == comment.User.user_id && <img className="delete-comment" onClick={handleDeleteCommentClick} src={image} alt="delete" />}
             </div>
-            <div className="create-comment">
+            <div className="comment-message">
                 <p>{comment.message}</p>
             </div>
         </div>

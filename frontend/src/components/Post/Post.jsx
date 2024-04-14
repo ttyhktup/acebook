@@ -2,14 +2,16 @@ import "./Post.css";
 import image from "/src/static/img/cross.png";
 import like from "/src/static/img/heart.png"
 import { useState, useEffect } from "react";
+import React from "react";
 import Comment from "../Comment/Comment";
 import { createComments, getComments, deleteComments } from "../../services/comments"
 
-const Post = ({ post, onLike, user, onDelete, token }) => {
+const Post = ({ post, onLike, user, onDelete, token, loggedUserID }) => {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [isClicked, setIsClicked] = useState(false);
-
+  const [commentUserID, setCommentUserID] = useState("");
+  const { Fragment } = React;
 
   const handleLikeClick = () => {
     onLike(post._id);
@@ -31,6 +33,7 @@ const Post = ({ post, onLike, user, onDelete, token }) => {
             const sortedPosts = data.comments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             setComments(sortedPosts)
             localStorage.setItem("token", data.token);
+            setCommentUserID(data.loggedUserID);
           })
           .catch((err) => {
             console.error(err);
@@ -78,7 +81,7 @@ const Post = ({ post, onLike, user, onDelete, token }) => {
               <img className="user-image" src={user.image} alt="image" />
               <p>{user.username}</p>
             </div>
-            <img className="delete-button" src={image} alt="delete" onClick={handleDeleteClick} />
+            {loggedUserID == user.user_id && <img className="delete-button" src={image} alt="delete" onClick={handleDeleteClick} />}
           </div>
           <div className="post-content">
             <div className="post-message"><p>{post.message}</p></div>
@@ -90,21 +93,24 @@ const Post = ({ post, onLike, user, onDelete, token }) => {
         </div>
             
         <div className="comments">
+          <h4>Comments</h4>
           <form className="create-comment" onSubmit={handleSubmitComment}>
               <input
                   className="comment-input"
                   type="text"
                   onChange={handleCommentChange}
+                  value={comment}
                   placeholder="Add a comment..."
               />
               <button className="comment-submit" type="submit">Submit</button>
           </form>
-          <h4>Comments</h4>
+          
+          {comments.length < 1 && <div className="no-comments"> No comments yet </div>}
           {comments
               .map((comment) => (
-                  <div className="comments-feed" key={comment._id}>
-                    <Comment comment={comment} onDelete={handleDeleteComment} />
-                  </div>
+                <Fragment key={comment._id}>
+                    <Comment commentUserID={commentUserID} comment={comment} onDelete={handleDeleteComment} />
+                  </Fragment>
               ))}
         </div>
 
