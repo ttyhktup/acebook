@@ -79,6 +79,8 @@ func CreateComment(ctx *gin.Context) {
 	userID := val.(string)
 	token, _ := auth.GenerateToken(userID)
 
+	loggedUserID := strconv.Itoa(int([]byte(userID)[0]))
+
 	// Convert comments to JSON Structs
 	jsonComments := make([]JSONComment, 0)
 	for _, comment := range *comments {
@@ -101,7 +103,7 @@ func CreateComment(ctx *gin.Context) {
 		})
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"message": "Comment created", "comments": jsonComments, "token": token})
+	ctx.JSON(http.StatusCreated, gin.H{"message": "Comment created", "comments": jsonComments, "token": token, "loggedUserID": loggedUserID})
 }
 
 func GetAllCommentsByPostId(ctx *gin.Context) {
@@ -126,6 +128,8 @@ func GetAllCommentsByPostId(ctx *gin.Context) {
 	userID := val.(string)
 	token, _ := auth.GenerateToken(userID)
 
+	loggedUserID := strconv.Itoa(int([]byte(userID)[0]))
+
 	// Convert comments to JSON Structs
 	jsonComments := make([]JSONComment, 0)
 	for _, comment := range *comments {
@@ -148,7 +152,7 @@ func GetAllCommentsByPostId(ctx *gin.Context) {
 		})
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"comments": jsonComments, "token": token})
+	ctx.JSON(http.StatusOK, gin.H{"comments": jsonComments, "token": token, "loggedUserID": loggedUserID})
 }
 
 func GetSpecificComment(ctx *gin.Context) {
@@ -181,6 +185,12 @@ func GetSpecificComment(ctx *gin.Context) {
 		user.Username = ""
 	}
 
+	val, _ := ctx.Get("userID")
+	userID := val.(string)
+	token, _ := auth.GenerateToken(userID)
+
+	loggedUserID := strconv.Itoa(int([]byte(userID)[0]))
+
 	jsonComment := JSONComment{
 		Message: comment.Message,
 		ID:      comment.ID,
@@ -193,7 +203,7 @@ func GetSpecificComment(ctx *gin.Context) {
 		},
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"comment": jsonComment})
+	ctx.JSON(http.StatusOK, gin.H{"comment": jsonComment, "token": token, "loggedUserID": loggedUserID})
 }
 
 func DeleteComment(ctx *gin.Context) {
@@ -227,6 +237,10 @@ func DeleteComment(ctx *gin.Context) {
 
 	userIDString := userIDToken.(string)
 
+	token, _ := auth.GenerateToken(userIDString)
+
+	loggedUserID := strconv.Itoa(int([]byte(userIDString)[0]))
+
 	if comment.UserID != strconv.Itoa(int([]byte(userIDString)[0])) {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "User ID can only delete own post"})
 		return
@@ -245,5 +259,43 @@ func DeleteComment(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"success": true, "message": "Comment deleted successfully", "deleted comment": DeletedComment})
+	ctx.JSON(http.StatusOK, gin.H{"success": true, "message": "Comment deleted successfully", "deleted comment": DeletedComment, "token": token, "loggedUserID": loggedUserID})
+}
+
+func UpdateCommentLikes(ctx *gin.Context) {
+	// Get the post ID from the URL path parameter
+	postID, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid post ID"})
+		return
+	}
+
+	// Get the comment ID from the URL path parameter
+	commentID, err := strconv.ParseUint(ctx.Param("comment_id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid comment ID"})
+		return
+	}
+
+	// Fetch the comment from the database
+	comment, err := models.FetchSpecificComment(int(postID), int(commentID))
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Comment not found"})
+		return
+	}
+
+	// Check if the post is nil
+	if comment == nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Comment not found"})
+		return
+	}
+
+	// Increment the likes count
+	likedComment, err := comment.SaveLike()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save like in comment"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Like added successfully", "liked_comment": likedComment})
 }
