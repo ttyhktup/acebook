@@ -1,0 +1,11 @@
+services:
+  - type: static
+    name: my-static-site
+    env: static
+    buildCommand: npm run build
+    staticPublishPath: build
+    headers:
+      - source: "**/*.js"
+        headers:
+          - key: Content-Type
+            value: application/javascript
